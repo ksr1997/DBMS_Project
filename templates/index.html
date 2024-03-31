@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Store Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+
+        header {
+            background-color: #007bff;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 36px;
+        }
+
+        header p {
+            font-size: 18px;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+        }
+
+        .feature {
+            width: 300px;
+            margin: 0 20px;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature h2 {
+            color: #007bff;
+            margin-top: 0;
+        }
+
+        .feature p {
+            color: #666;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        footer {
+            background-color: #f2f2f2;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        footer p {
+            margin: 0;
+            color: #666;
+        }
+
+        .customer-feature {
+            width: 300px;
+            margin: 0 20px;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .customer-feature h2 {
+            color: #007bff;
+            margin-top: 0;
+        }
+
+        .customer-feature p {
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to My Store Management System</h1>
+        <p>A simple system to manage your stores efficiently</p>
+    </header>
+
+    <section class="features">
+        <div class="feature">
+            <h2>View Stores</h2>
+            <p>Explore the list of all your stores, view details, and manage them effortlessly.</p>
+            <a href="{{ url_for('stores') }}" class="btn">View Stores</a>
+        </div>
+        <div class="feature">
+            <h2>Add New Store</h2>
+            <p>Add a new store to your system by providing store details.</p>
+            <a href="{{ url_for('add_store') }}" class="btn">Add Store</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <div class="customer-feature">
+            <h2>View Customers</h2>
+            <p>Explore the list of all your customers, view details, and manage them effortlessly.</p>
+            <a href="{{ url_for('view_customers') }}" class="btn">View Customers</a>
+        </div>
+        <div class="customer-feature">
+            <h2>Add New Customer</h2>
+            <p>Add a new customer to your system by providing customer details.</p>
+            <a href="{{ url_for('add_customer') }}" class="btn">Add Customer</a>
+        </div>
+    </section>
+
+    <!-- Customer details section -->
+    <div class="customer-container container">
+        <h1>Customer Details</h1>
+        <form class="customer-form" id="customer-form">
+            <label for="customer-id">Select Customer ID:</label>
+            <select id="customer-id" onchange="fetchCustomerData()">
+                <option value="">Select</option>
+                {% for customer in customers %}
+                <option value="{{ customer[0] }}">{{ customer[0] }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        <div class="customer-details" id="customer-details">
+            <!-- Customer details will be displayed here -->
+        </div>
+    </div>
+
+    <script>
+        // JavaScript functions for fetching and displaying customer data
+        function fetchCustomerData() {
+            var customerId = document.getElementById("customer-id").value;
+            if (customerId) {
+                fetch("/get_customer_data/" + customerId)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data); // Debugging statement
+                        displayCustomerData(data);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching customer data:', error); // Debugging statement
+                    });
+            } else {
+                document.getElementById("customer-details").innerHTML = "";
+            }
+        }
+
+        function displayCustomerData(data) {
+            var detailsHTML = "<h2>Customer Details</h2>";
+            detailsHTML += "<p><strong>Customer ID:</strong> " + data.customer_id + "</p>";
+            detailsHTML += "<p><strong>First Name:</strong> " + data.first_name + "</p>";
+            detailsHTML += "<p><strong>Last Name:</strong> " + data.last_name + "</p>";
+            detailsHTML += "<p><strong>Email:</strong> " + data.email + "</p>";
+            detailsHTML += "<p><strong>Address:</strong> " + data.address + "</p>";
+            detailsHTML += "<p><strong>Phone Number:</strong> " + data.phone_number + "</p>";
+            document.getElementById("customer-details").innerHTML = detailsHTML;
+        }
+    </script>
+
+
+    <footer>
+        <p>&copy; 2024 My Store Management System. All rights reserved.</p>
+    </footer>
+
+
+</body>
+
+</html>

@@ -1,0 +1,358 @@
+from flask import Flask, render_template, request, redirect, url_for
+from flask_sqlalchemy import SQLAlchemy
+
+app = Flask(__name__)
+password = "Ksr199221@"
+app.config['SQLALCHEMY_DATABASE_URI'] = f"postgresql://postgres:{password}@localhost:5432/postgres"
+db = SQLAlchemy(app)
+
+# Define models
+class Store(db.Model):
+    __tablename__ = 'store'
+    store_id = db.Column(db.String(10), primary_key=True)
+    store_name = db.Column(db.String(100))
+    address = db.Column(db.String(255))
+    city = db.Column(db.String(100))
+    country = db.Column(db.String(100))
+    phone_number = db.Column(db.String(20))
+
+class Customer(db.Model):
+    __tablename__ = 'customer'
+    customer_id = db.Column(db.String(10), primary_key=True)
+    first_name = db.Column(db.String(50))
+    last_name = db.Column(db.String(50))
+    email = db.Column(db.String(100))
+    address = db.Column(db.String(255))
+    phone_number = db.Column(db.String(20))
+
+# Routes
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/stores')
+def stores():
+    stores = Store.query.all()
+    return render_template('stores.html', stores=stores)
+
+@app.route('/customers')
+def customers():
+    customers = Customer.query.all()
+    return render_template('customers.html', customers=customers)
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+from flask import Flask, render_template, request, redirect, url_for
+import psycopg2
+
+app = Flask(__name__)
+
+# Configure PostgreSQL connection
+conn = psycopg2.connect(
+    dbname="postgres",
+    user="postgres",
+    password="Ksr199221@",
+    host="localhost",
+    port="5432"
+)
+
+# Define routes
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/stores')
+def stores():
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM store")
+    stores = cur.fetchall()
+    cur.close()
+    return render_template('stores.html', stores=stores)
+
+@app.route('/customers')
+def customers():
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM customer")
+    customers = cur.fetchall()
+    cur.close()
+    return render_template('customers.html', customers=customers)
+
+@app.route('/add_sale', methods=['POST'])
+def add_sale():
+    if request.method == 'POST':
+        # Get form data
+        # Insert new sale record into the database
+        return redirect(url_for('sales'))
+
+@app.route('/sale/<string:sale_id>')
+def view_sale(sale_id):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM sale WHERE sale_id = %s", (sale_id,))
+    sale = cur.fetchone()
+    cur.close()
+    return render_template('sale.html', sale=sale)
+
+@app.route('/update_sale/<string:sale_id>', methods=['GET', 'POST'])
+def update_sale(sale_id):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM sale WHERE sale_id = %s", (sale_id,))
+    sale = cur.fetchone()
+    cur.close()
+
+    if request.method == 'POST':
+        # Get form data
+        # Update sale record in the database
+        return redirect(url_for('sales'))
+
+    return render_template('update_sale.html', sale=sale)
+
+@app.route('/delete_sale/<string:sale_id>', methods=['POST'])
+def delete_sale(sale_id):
+    cur = conn.cursor()
+    cur.execute("DELETE FROM sale WHERE sale_id = %s", (sale_id,))
+    conn.commit()
+    cur.close()
+    return redirect(url_for('sales'))
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+#@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@22
+from flask import Flask, render_template, request, redirect, url_for
+import psycopg2
+
+app = Flask(__name__)
+
+# PostgreSQL connection details
+dbname = 'postgres'
+user = 'postgres'
+password = 'Ksr199221@'
+host = 'localhost'
+port = '5432'
+
+# Connect to the PostgreSQL database
+conn = psycopg2.connect(dbname=dbname, user=user, password=password, host=host, port=port)
+cur = conn.cursor()
+
+# Routes
+@app.route('/')
+def home():
+    return render_template('index.html')
+
+@app.route('/stores')
+def stores():
+    cur.execute("SELECT * FROM Store")
+    stores = cur.fetchall()
+    return render_template('stores.html', stores=stores)
+
+@app.route('/add_store', methods=['POST'])
+def add_store():
+    if request.method == 'POST':
+        store_id = request.form['store_id']
+        store_name = request.form['store_name']
+        address = request.form['address']
+        city = request.form['city']
+        country = request.form['country']
+        phone_number = request.form['phone_number']
+        cur.execute("INSERT INTO Store (store_id, store_name, address, city, country, phone_number) VALUES (%s, %s, %s, %s, %s, %s)", (store_id, store_name, address, city, country, phone_number))
+        conn.commit()
+        return redirect(url_for('stores'))
+
+@app.route('/delete_store/<string:store_id>', methods=['POST'])
+def delete_store(store_id):
+    cur.execute("DELETE FROM Store WHERE store_id = %s", (store_id,))
+    conn.commit()
+    return redirect(url_for('stores'))
+
+@app.route('/update_store/<string:store_id>', methods=['GET', 'POST'])
+def update_store(store_id):
+    if request.method == 'POST':
+        store_name = request.form['store_name']
+        address = request.form['address']
+        city = request.form['city']
+        country = request.form['country']
+        phone_number = request.form['phone_number']
+        cur.execute("UPDATE Store SET store_name = %s, address = %s, city = %s, country = %s, phone_number = %s WHERE store_id = %s", (store_name, address, city, country, phone_number, store_id))
+        conn.commit()
+        return redirect(url_for('stores'))
+    else:
+        cur.execute("SELECT * FROM Store WHERE store_id = %s", (store_id,))
+        store = cur.fetchone()
+        return render_template('update_store.html', store=store)
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stores Page</title>
+</head>
+
+<body>
+    <h1>Stores</h1>
+    <form action="{{ url_for('add_store') }}" method="POST">
+        <label for="store_id">Store ID:</label>
+        <input type="text" name="store_id" id="store_id" required><br>
+        <label for="store_name">Store Name:</label>
+        <input type="text" name="store_name" id="store_name" required><br>
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" required><br>
+        <label for="city">City:</label>
+        <input type="text" name="city" id="city" required><br>
+        <label for="country">Country:</label>
+        <input type="text" name="country" id="country" required><br>
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" id="phone_number" required><br>
+        <button type="submit">Add Store</button>
+    </form>
+    <hr>
+    <h2>All Stores</h2>
+    <ul>
+        {% for store in stores %}
+        <li>
+            <strong>{{ store[1] }}</strong> - {{ store[2] }}, {{ store[3] }}, {{ store[4] }}<br>
+            Phone: {{ store[5] }}<br>
+            <form action="{{ url_for('delete_store', store_id=store[0]) }}" method="POST">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+    <h1>Update Store</h1>
+    <form action="{{ url_for('update_store', store_id=store[0]) }}" method="POST">
+        <label for="store_name">Store Name:</label>
+        <input type="text" name="store_name" id="store_name" value="{{ store[1] }}" required><br>
+        <label for="address">Address:</label>
+        <input type="text" name="address" id="address" value="{{ store[2] }}" required><br>
+        <label for="city">City:</label>
+        <input type="text" name="city" id="city" value="{{ store[3] }}" required><br>
+        <label for="country">Country:</label>
+        <input type="text" name="country" id="country" value="{{ store[4] }}" required><br>
+        <label for="phone_number">Phone Number:</label>
+        <input type="text" name="phone_number" id="phone_number" value="{{ store[5] }}" required><br>
+        <button type="submit">Update Store</button>
+    </form>
+</body>
+
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <a href="{{ url_for('stores') }}">View Stores</a>
+</body>
+
+</html>
+
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stores</title>
+</head>
+
+<body>
+    <h1>Stores</h1>
+    <a href="{{ url_for('add_store') }}">Add Store</a>
+    <ul>
+        {% for store in stores %}
+        <li>
+            <strong>{{ store[1] }}</strong> - {{ store[2] }}, {{ store[3] }}, {{ store[4] }}<br>
+            Phone: {{ store[5] }}<br>
+            <a href="{{ url_for('edit_store', store_id=store[0]) }}">Edit</a>
+            <form action="{{ url_for('delete_store', store_id=store[0]) }}" method="POST">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+
+</html>
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+</head>
+
+<body>
+    <h1>Welcome to the Home Page</h1>
+    <a href="{{ url_for('stores') }}">View Stores</a>
+</body>
+
+</html>
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to My Store Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+
+<body>
+    <header>
+        <h1>Welcome to My Store Management System</h1>
+        <p>A simple system to manage your stores efficiently</p>
+    </header>
+
+    <section class="features">
+        <div class="feature">
+            <h2>View Stores</h2>
+            <p>Explore the list of all your stores, view details, and manage them effortlessly.</p>
+            <a href="{{ url_for('stores') }}" class="btn btn-primary">View Stores</a>
+        </div>
+        <div class="feature">
+            <h2>Add New Store</h2>
+            <p>Add a new store to your system by providing store details.</p>
+            <a href="{{ url_for('add_store') }}" class="btn btn-primary">Add Store</a>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 My Store Management System. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>
