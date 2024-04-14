@@ -27,6 +27,7 @@ def stores():
     stores = cur.fetchall()
     return render_template('stores.html', stores=stores)
 
+
 @app.route('/add_store', methods=['GET', 'POST'])
 def add_store():
     if request.method == 'POST':
@@ -42,6 +43,22 @@ def add_store():
     else:
         return render_template('add_store.html')
 
+# @app.route('/edit_store/<string:store_id>', methods=['GET', 'POST'])
+# def edit_store(store_id):
+#     if request.method == 'POST':
+#         store_name = request.form['store_name']
+#         address = request.form['address']
+#         city = request.form['city']
+#         country = request.form['country']
+#         phone_number = request.form['phone_number']
+#         cur.execute("UPDATE Store SET store_name = %s, address = %s, city = %s, country = %s, phone_number = %s WHERE store_id = %s", (store_name, address, city, country, phone_number, store_id))
+#         conn.commit()
+#         return redirect(url_for('stores'))
+#     else:
+#         cur.execute("SELECT * FROM Store WHERE store_id = %s", (store_id,))
+#         store = cur.fetchone()
+#         return render_template('edit_store.html', store=store)
+    
 @app.route('/edit_store/<string:store_id>', methods=['GET', 'POST'])
 def edit_store(store_id):
     if request.method == 'POST':
@@ -57,6 +74,7 @@ def edit_store(store_id):
         cur.execute("SELECT * FROM Store WHERE store_id = %s", (store_id,))
         store = cur.fetchone()
         return render_template('edit_store.html', store=store)
+
 
 @app.route('/delete_store/<string:store_id>', methods=['POST'])
 def delete_store(store_id):
