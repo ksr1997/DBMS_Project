@@ -1,15 +1,19 @@
-Drug Store Management System
-Overview
+## Drug Store Management System
+
+## Overview
+
 The Drug Store Management System is designed to assist Stores in tracking and managing their daily sales data effectively. This project utilizes a database system to store information about stores, customers, sellers, orders, and products. Through the implementation of CRUD operations using Python Flask and PostgreSQL SQL, users can interact with the system to perform various tasks related to managing Drug Store operations.
 
-Features
+## Features
+
 Store Management: Store information such as store name, address, city, country, and phone number is stored in the database. This allows for efficient management of multiple pharmacy locations.
 Customer Management: The system maintains records of customers including their names, contact details, and addresses, facilitating personalized services and communication.
 Seller Management: Information about sellers or employees working at the pharmacy is stored, enabling effective workforce management and tracking of seller-related activities.
 Product Inventory: Details of drugs or products available at the pharmacy, including their names, brands, prices, quantities in stock, manufacturing dates, expiration dates, manufacturers, and associated diseases, are recorded in the database. This helps in managing inventory levels and product details.
 Sales Tracking: The system records sales transactions, capturing data such as sale date, order ID, product ID, price, store ID, seller ID, and customer ID. This enables the monitoring of sales patterns, identification of trends, and analysis of customer behavior.
 
-Installation
+## Installation
+
 To set up the Drug Store Management System locally, follow these steps:
 Clone the repository: git clone https://github.com/ksr1997/DBMS_Project.git
 Navigate to the project directory: cd DBMS_Project
@@ -20,7 +24,8 @@ Run the Flask application: python app.py
 Usage
 Once the application is running, users can perform CRUD operations through the provided endpoints. These operations include adding new records, retrieving existing data, updating information, and deleting entries within the system.
 
-Contributing
+## Contributing
+
 Contributions to the project are welcome! If you'd like to contribute, please fork the repository, create a new branch for your feature or fix, and submit a pull request.
 
 ## Credits
